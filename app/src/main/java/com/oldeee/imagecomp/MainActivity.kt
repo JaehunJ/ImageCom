@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -14,8 +13,8 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import com.oldeee.oldeeimageutil.OldeeImageUtil
@@ -124,27 +123,21 @@ class MainActivity : AppCompatActivity() {
             if (data == null) {
                 val file = File(currentPhotoPath?:"")
                 val uri = Uri.fromFile(file)
-
+//
                 val needResize = OldeeImageUtil.needResize(this, uri)
-
+//
                 Log.e("#debug","need Resize : ${needResize}")
-
+//
                 if(needResize){
                     val storageDir: File? = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                    val bitmap = OldeeImageUtil.optimizeBitmap(context = this, file.path, storageDir!!)
-                    bitmap?.let{f->
-
-                        val uri2 = FileProvider.getUriForFile(
-                            this,
-                            BuildConfig.APPLICATION_ID + ".fileprovider",
-                            f
-                        )
+                    val bitmap = OldeeImageUtil.optimizeBitmap(context = this, uri, storageDir!!)
+                    bitmap?.let{path->
+                        val uri2 = Uri.fromFile(File(path))
                         tv.setImageURI(uri2)
 
                         OldeeImageUtil.needResize(this, uri2)
                     }
                 }
-//                list.add(Uri.fromFile(File(currentPhotoPath ?: "")))
             } else {
                 val selectedImage = data.data
 
@@ -154,20 +147,22 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     if(mimeType == "image/jpeg"){
-//                        val needResize = OldeeImageUtil.needResize(this, it)
-//
-//                        Log.e("#debug","need Resize : ${needResize}")
-//
-//                        if(needResize){
-//                            Log.e("#debug", "comp")
-//                            val bitmap = OldeeImageUtil.optimizeBitmap(context = this, it)
-//                            bitmap?.let{path->
-//                                val uri = Uri.fromFile(File(path))
-//                                tv.setImageURI(uri)
-//
-//                                OldeeImageUtil.needResize(this, uri)
-//                            }
-//                        }
+                        val needResize = OldeeImageUtil.needResize(this, it)
+
+                        Log.e("#debug","need Resize : ${needResize}")
+
+                        if(needResize){
+                            Log.e("#debug", "comp")
+                            val storageDir: File? = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+                            val bitmap = OldeeImageUtil.optimizeBitmap(context = this, it, storageDir!!)
+                            bitmap?.let{path->
+                                val uri = Uri.fromFile(File(path))
+                                tv.setImageURI(uri)
+
+                                OldeeImageUtil.needResize(this, uri)
+                            }
+                        }
                     }else{
 //                        activityFuncFunction.showToast("JPG 이미지만 등록할 수 있어요.")
                     }
