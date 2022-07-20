@@ -83,8 +83,7 @@ object OldeeImageUtil {
         input?.close()
 
         var bitmap: Bitmap?
-//        options.inSampleSize = calculateInSampleSize(options)
-//        bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri), null, options)
+
         BitmapFactory.Options().run {
             inSampleSize = calculateInSampleSize(options)
             input = context.contentResolver.openInputStream(uri)
@@ -101,28 +100,6 @@ object OldeeImageUtil {
         return bitmap
     }
 
-//    private fun resizeBitmapFormUri(path: String, context: Context): Bitmap? {
-//        val input = context.contentResolver.openInputStream(uri)
-//
-//        val options = BitmapFactory.Options().apply {
-//            inJustDecodeBounds = true
-//        }
-//
-//        var bitmap: Bitmap?
-//        BitmapFactory.Options().run {
-//            inSampleSize = calculateInSampleSize(options)
-//            bitmap = BitmapFactory.decodeStream(input, null, this)
-//        }
-//
-//        // 아래에 회전된 이미지 되돌리기에서 다시 언급할게용 :)
-//        bitmap = bitmap?.let {
-//            rotateImageIfRequired(context, bitmap!!, uri)
-//        }
-//
-//        input?.close()
-//
-//        return bitmap
-//    }
 
     /**
      * 리사이즈가 필요한지 판단

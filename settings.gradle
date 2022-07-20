@@ -16,3 +16,4 @@ rootProject.name = "ImageComp"
 include ':app'
 include ':OldeeImageUtil'
 include ':OldeeImageViewer'
+include ':OldeeImageViewDialog'
