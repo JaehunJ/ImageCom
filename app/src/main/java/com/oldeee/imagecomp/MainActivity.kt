@@ -11,12 +11,12 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
-import android.widget.Button
-import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
+import com.oldee.imageviewer.ImageViewerActivity
+import com.oldeee.imagecomp.databinding.ActivityMainBinding
 import com.oldeee.oldeeimageutil.OldeeImageUtil
 import java.io.File
 import java.io.IOException
@@ -25,11 +25,14 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var btn:Button
-    lateinit var tv:ImageView
+    //    lateinit var btn: Button
+//    lateinit var tv: ImageView
+    lateinit var binding: ActivityMainBinding
 
     var currentPhotoPath: String? = null
     var photoUri: Uri? = null
+
+    var resizeUri: Uri? = null
 
     private val permissions =
         arrayOf(
@@ -53,17 +56,34 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
 
-        btn = findViewById(R.id.btn_call)
-        tv = findViewById(R.id.tv_info)
+        setContentView(binding.root)
 
-        btn.setOnClickListener {
+        binding.ivBefore.setOnClickListener {
+            resizeUri?.let {
+                val uriIntent = Intent(this, ImageViewerActivity::class.java)
+                uriIntent.putExtra("uri", it.toString())
+
+                startActivity(uriIntent)
+            }
+        }
+
+        binding.ivAfter.setOnClickListener {
+            resizeUri?.let {
+                val uriIntent = Intent(this, ImageViewerActivity::class.java)
+                uriIntent.putExtra("uri", it.toString())
+
+                startActivity(uriIntent)
+            }
+        }
+
+        binding.btnCall.setOnClickListener {
             val check = checkPermission(this, *permissions)
 
-            if (check){
+            if (check) {
                 showFileSelector(this)
-            }else{
+            } else {
                 requestPermissionResult.launch(permissions)
             }
         }
@@ -121,49 +141,67 @@ class MainActivity : AppCompatActivity() {
             val list = mutableListOf<Uri>()
             //use camera
             if (data == null) {
-                val file = File(currentPhotoPath?:"")
+                val file = File(currentPhotoPath ?: "")
                 val uri = Uri.fromFile(file)
+
+                binding.ivBefore.setImageURI(uri)
 //
                 val needResize = OldeeImageUtil.needResize(this, uri)
 //
-                Log.e("#debug","need Resize : ${needResize}")
+                Log.e("#debug", "need Resize : ${needResize}")
+                binding.tvInfoBefore.text =
+                    String.format("w:%d, h:%d", needResize.width, needResize.height)
 //
-                if(needResize){
+                if (needResize.need) {
                     val storageDir: File? = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
                     val bitmap = OldeeImageUtil.optimizeBitmap(context = this, uri, storageDir!!)
-                    bitmap?.let{path->
+                    bitmap?.let { path ->
                         val uri2 = Uri.fromFile(File(path))
-                        tv.setImageURI(uri2)
+                        binding.ivAfter.setImageURI(uri2)
+                        resizeUri = uri2
 
-                        OldeeImageUtil.needResize(this, uri2)
+                        val result = OldeeImageUtil.needResize(this, uri2)
+                        binding.tvInfoAfter.text =
+                            String.format("w:%d, h:%d", result.width, result.height)
                     }
                 }
             } else {
                 val selectedImage = data.data
 
                 selectedImage?.let {
-                    val mimeType = it.let {
-                            returnUri-> this.contentResolver?.getType(it)
+                    val mimeType = it.let { returnUri ->
+                        this.contentResolver?.getType(it)
                     }
 
-                    if(mimeType == "image/jpeg"){
+                    if (mimeType == "image/jpeg") {
                         val needResize = OldeeImageUtil.needResize(this, it)
 
-                        Log.e("#debug","need Resize : ${needResize}")
+                        Log.e("#debug", "need Resize : ${needResize}")
 
-                        if(needResize){
+                        binding.ivBefore.setImageURI(it)
+                        binding.tvInfoBefore.text =
+                            String.format("w:%d, h:%d", needResize.width, needResize.height)
+
+                        if (needResize.need) {
                             Log.e("#debug", "comp")
-                            val storageDir: File? = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                            val storageDir: File? =
+                                this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
-                            val bitmap = OldeeImageUtil.optimizeBitmap(context = this, it, storageDir!!)
-                            bitmap?.let{path->
+                            val bitmap =
+                                OldeeImageUtil.optimizeBitmap(context = this, it, storageDir!!)
+                            bitmap?.let { path ->
                                 val uri = Uri.fromFile(File(path))
-                                tv.setImageURI(uri)
+                                binding.ivAfter.setImageURI(uri)
 
-                                OldeeImageUtil.needResize(this, uri)
+                                resizeUri = uri
+
+
+                                val result = OldeeImageUtil.needResize(this, uri)
+                                binding.tvInfoAfter.text =
+                                    String.format("w:%d, h:%d", result.width, result.height)
                             }
                         }
-                    }else{
+                    } else {
 //                        activityFuncFunction.showToast("JPG 이미지만 등록할 수 있어요.")
                     }
                 }

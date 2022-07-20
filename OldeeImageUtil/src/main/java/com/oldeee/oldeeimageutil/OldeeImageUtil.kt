@@ -14,6 +14,12 @@ import java.io.FileOutputStream
 import java.util.*
 
 object OldeeImageUtil {
+    data class NeedResize(
+        val need:Boolean,
+        val width:Int,
+        val height:Int
+    )
+
     const val MAX = 1024
 
     enum class MODE {
@@ -121,7 +127,7 @@ object OldeeImageUtil {
     /**
      * 리사이즈가 필요한지 판단
      */
-    fun needResize(context: Context, uri: Uri): Boolean {
+    fun needResize(context: Context, uri: Uri): NeedResize {
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = true
         val input = context.contentResolver!!.openInputStream(uri)
@@ -133,10 +139,12 @@ object OldeeImageUtil {
 
         input?.close()
 
+        Log.e("#debug", "image data: w->${bitmap?.width}, h->${bitmap?.height}")
         if (bitmap == null)
-            return false
+            return NeedResize(false, 0, 0)
         else {
-            return bitmap?.width!! > MAX || bitmap?.height!! > MAX
+            val need = bitmap?.width!! > MAX || bitmap?.height!! > MAX
+            return NeedResize(need, bitmap?.width?:0, bitmap?.height?:0)
         }
     }
 
