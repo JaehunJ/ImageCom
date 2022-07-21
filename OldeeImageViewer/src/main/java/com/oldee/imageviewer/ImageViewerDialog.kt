@@ -1,10 +1,11 @@
 package com.oldee.imageviewer
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.ScaleGestureDetector
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.view.GestureDetectorCompat
-import androidx.core.view.get
 import androidx.fragment.app.DialogFragment
 import androidx.viewpager2.widget.ViewPager2
 import com.oldee.imageviewer.databinding.LayoutImageViewerDialogBinding
@@ -21,8 +22,6 @@ class ImageViewerDialog(
     private val MULTIPLE = 1
 
     lateinit var adapter: ImageViewerAdapter
-
-    private var mScaleGestureDetector: ScaleGestureDetector? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,16 +42,6 @@ class ImageViewerDialog(
         mode = if (bitmapList.size == 1) SINGLE else MULTIPLE
         adapter = ImageViewerAdapter(bitmapList, imageCallback)
         binding.vpImage.adapter = adapter
-
-//        mScaleGestureDetector =
-
-//        binding.vpImage.getChildAt(0)?.setOnTouchListener { v, event ->
-//
-//            return@setOnTouchListener true
-//        }
-
-
-
 
         return binding.root
     }
@@ -75,14 +64,8 @@ class ImageViewerDialog(
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
 
-                val childView = binding.vpImage.getChildAt(binding.vpImage.currentItem)?.findViewById<ImageView>(R.id.iv_image)
-                childView?.let{
-                    mScaleGestureDetector = ScaleGestureDetector(requireContext(),
-                        ImageViewerActivity.ScaleListener(it)
-                    )
-                }
-
                 binding.tvCurrent.text = (position + 1).toString()
+
                 if (position == 0 && mode == MULTIPLE) {
                     binding.ivPrev.visibility = View.GONE
                 } else if (position == bitmapList.size - 1 && mode == MULTIPLE) {
