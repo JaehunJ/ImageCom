@@ -41,7 +41,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="@drawable/ic_arr_left"
-            android:backgroundTint="#3Affffff" />
+            android:backgroundTint="#7Affffff" />
 
         <ImageView
             android:id="@+id/iv_next"
@@ -51,7 +51,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="@drawable/ic_arr_right"
-            android:backgroundTint="#3Affffff" />
+            android:backgroundTint="#7Affffff" />
 
         <LinearLayout
             app:layout_constraintStart_toStartOf="parent"
@@ -82,7 +82,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20dp"
-                tools:text="/"
+                android:text="/"
+                android:textStyle="bold"
                 android:textColor="#AAAAAA"
                 android:fontFamily="@font/spoqa_han_sans_neo"/>
             <TextView

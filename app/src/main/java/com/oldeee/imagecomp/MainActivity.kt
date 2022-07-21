@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import com.oldee.imageviewer.ImageViewerActivity
+import com.oldee.imageviewer.ImageViewerDialog
 import com.oldeee.imagecomp.databinding.ActivityMainBinding
 import com.oldeee.oldeeimageutil.OldeeImageUtil
 import java.io.File
@@ -62,19 +63,24 @@ class MainActivity : AppCompatActivity() {
 
         binding.ivBefore.setOnClickListener {
             resizeUri?.let {
-                val uriIntent = Intent(this, ImageViewerActivity::class.java)
-                uriIntent.putExtra("uri", it.toString())
 
-                startActivity(uriIntent)
+//                val uriIntent = Intent(this, ImageViewerActivity::class.java)
+//                uriIntent.putExtra("uri", it.toString())
+//
+//                startActivity(uriIntent)
             }
         }
 
         binding.ivAfter.setOnClickListener {
             resizeUri?.let {
-                val uriIntent = Intent(this, ImageViewerActivity::class.java)
-                uriIntent.putExtra("uri", it.toString())
-
-                startActivity(uriIntent)
+                val dialog = ImageViewerDialog(listOf(it.path?:"",it.path?:"",it.path?:"")){imageView, s ->
+                    imageView.setImageURI(Uri.parse(s))
+                }
+                dialog.show(supportFragmentManager, "")
+//                val uriIntent = Intent(this, ImageViewerActivity::class.java)
+//                uriIntent.putExtra("uri", it.toString())
+//
+//                startActivity(uriIntent)
             }
         }
 
@@ -202,7 +208,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     } else {
-//                        activityFuncFunction.showToast("JPG 이미지만 등록할 수 있어요.")
+
                     }
                 }
             }
@@ -211,12 +217,6 @@ class MainActivity : AppCompatActivity() {
                 Log.e("#debug", "image list is null")
                 return
             }
-//
-//            if(!viewModel.isListContains(list[0])){
-//                viewModel.addPhoto(list[0])
-//            }else{
-//                activityFuncFunction.showToast("동일한 이미지가 있어요.")
-//            }
         }
     }
 

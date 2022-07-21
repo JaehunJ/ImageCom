@@ -1,11 +1,14 @@
 package com.oldee.imageviewer
 
+import android.graphics.PointF
 import android.net.Uri
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.translationMatrix
+import androidx.core.view.ScaleGestureDetectorCompat
 import com.oldee.imageviewer.databinding.ActivityImageViewerBinding
 
 
@@ -42,10 +45,28 @@ class ImageViewerActivity : AppCompatActivity() {
 
     open class ScaleListener(val imageView:ImageView,) : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         private var mScaleFactor:Float = 1.0f
+        private var viewportFocus = PointF()
+        private var lastSpanX = 0f
+        private var lastSpanY = 0f
+
+        override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
+            detector?.let{ de->
+                lastSpanX = de.currentSpanX
+                lastSpanY = de.currentSpanY
+            }
+
+
+            return true
+        }
 
         override fun onScale(detector: ScaleGestureDetector?): Boolean {
             detector?.let{ dec->
-                mScaleFactor *= dec.scaleFactor;
+                val spanX = dec.currentSpanX
+                val spanY = dec.currentSpanY
+
+//                val newWidth = lastSpanX/spanX*
+//
+//                mScaleFactor *= dec.scaleFactor;
 
                 // 최대 10배, 최소 10배 줌 한계 설정
                 mScaleFactor = Math.max(0.1f,
