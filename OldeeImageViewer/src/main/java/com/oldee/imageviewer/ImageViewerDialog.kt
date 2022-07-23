@@ -62,11 +62,11 @@ class ImageViewerDialog(
         super.onViewCreated(view, savedInstanceState)
 
         if (mode == SINGLE) {
-            binding.ivPrev.visibility = View.GONE
-            binding.ivNext.visibility = View.GONE
+            binding.llLeft.visibility = View.GONE
+            binding.llRight.visibility = View.GONE
         } else {
-            binding.ivPrev.visibility = View.VISIBLE
-            binding.ivNext.visibility = View.VISIBLE
+            binding.llLeft.visibility = View.VISIBLE
+            binding.llRight.visibility = View.VISIBLE
         }
 
         binding.tvMax.text = bitmapList.size.toString()
@@ -95,7 +95,9 @@ class ImageViewerDialog(
 
                 if (position == 0 && mode == MULTIPLE) {
                     binding.llLeft.visibility = View.GONE
+                    binding.llRight.visibility = View.VISIBLE
                 } else if (position == bitmapList.size - 1 && mode == MULTIPLE) {
+                    binding.llLeft.visibility = View.VISIBLE
                     binding.llRight.visibility = View.GONE
                 } else if (mode == MULTIPLE) {
                     binding.llLeft.visibility = View.VISIBLE

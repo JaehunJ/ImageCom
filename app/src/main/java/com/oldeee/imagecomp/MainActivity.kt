@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.ivAfter.setOnClickListener {
             resizeUri?.let {
-                val dialog = ImageViewerDialog(listOf(it.path?:"",it.path?:"",it.path?:"")){imageView, s ->
+                val dialog = ImageViewerDialog(listOf(it.path?:"",it.path?:"")){imageView, s ->
                     imageView.setImageURI(Uri.parse(s))
                 }
                 dialog.show(supportFragmentManager, "")
