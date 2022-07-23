@@ -1,13 +1,16 @@
 package com.oldee.imageviewer
 
 import android.os.Bundle
+import android.transition.Fade
+import android.transition.Transition
+import android.transition.TransitionManager
 import android.view.*
 import android.widget.ImageView
-import androidx.core.view.GestureDetectorCompat
-import androidx.core.view.get
 import androidx.fragment.app.DialogFragment
 import androidx.viewpager2.widget.ViewPager2
 import com.oldee.imageviewer.databinding.LayoutImageViewerDialogBinding
+
+
 
 class ImageViewerDialog(
     val bitmapList: List<String>,
@@ -23,6 +26,8 @@ class ImageViewerDialog(
     lateinit var adapter: ImageViewerAdapter
 
     private var mScaleGestureDetector: ScaleGestureDetector? = null
+
+    private var component = listOf<View>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +48,10 @@ class ImageViewerDialog(
         mode = if (bitmapList.size == 1) SINGLE else MULTIPLE
         adapter = ImageViewerAdapter(bitmapList, imageCallback)
         binding.vpImage.adapter = adapter
+
+        binding.vpImage.setOnClickListener {
+            visibilityComponent(binding.llLegend.visibility == View.GONE)
+        }
 
 //        mScaleGestureDetector =
 
@@ -95,5 +104,19 @@ class ImageViewerDialog(
         })
 
         adapter.init()
+    }
+
+    private fun visibilityComponent(v:Boolean){
+        if(v){
+            binding.llLeft.visibility = View.VISIBLE
+            binding.llRight.visibility = View.VISIBLE
+            binding.llClose.visibility = View.VISIBLE
+            binding.llLegend.visibility = View.VISIBLE
+        }else{
+            binding.llLeft.visibility = View.GONE
+            binding.llRight.visibility = View.GONE
+            binding.llClose.visibility = View.GONE
+            binding.llLegend.visibility = View.GONE
+        }
     }
 }
