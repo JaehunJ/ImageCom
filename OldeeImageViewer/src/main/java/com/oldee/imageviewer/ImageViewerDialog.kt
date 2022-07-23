@@ -1,6 +1,10 @@
 package com.oldee.imageviewer
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ScaleGestureDetector
+import android.view.View
+import android.view.ViewGroup
 import android.transition.Fade
 import android.transition.Transition
 import android.transition.TransitionManager
@@ -25,10 +29,6 @@ class ImageViewerDialog(
 
     lateinit var adapter: ImageViewerAdapter
 
-    private var mScaleGestureDetector: ScaleGestureDetector? = null
-
-    private var component = listOf<View>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_TITLE, R.style.FullScreenDialogFragment)
@@ -49,9 +49,9 @@ class ImageViewerDialog(
         adapter = ImageViewerAdapter(bitmapList, imageCallback)
         binding.vpImage.adapter = adapter
 
-        binding.vpImage.setOnClickListener {
-            visibilityComponent(binding.llLegend.visibility == View.GONE)
-        }
+//        binding.vpImage.setOnClickListener {
+//            visibilityComponent(binding.llLegend.visibility == View.GONE)
+//        }
 
 //        mScaleGestureDetector =
 
@@ -84,14 +84,8 @@ class ImageViewerDialog(
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
 
-                val childView = binding.vpImage.getChildAt(binding.vpImage.currentItem)?.findViewById<ImageView>(R.id.iv_image)
-                childView?.let{
-                    mScaleGestureDetector = ScaleGestureDetector(requireContext(),
-                        ImageViewerActivity.ScaleListener(it)
-                    )
-                }
-
                 binding.tvCurrent.text = (position + 1).toString()
+
                 if (position == 0 && mode == MULTIPLE) {
                     binding.ivPrev.visibility = View.GONE
                 } else if (position == bitmapList.size - 1 && mode == MULTIPLE) {
@@ -104,19 +98,5 @@ class ImageViewerDialog(
         })
 
         adapter.init()
-    }
-
-    private fun visibilityComponent(v:Boolean){
-        if(v){
-            binding.llLeft.visibility = View.VISIBLE
-            binding.llRight.visibility = View.VISIBLE
-            binding.llClose.visibility = View.VISIBLE
-            binding.llLegend.visibility = View.VISIBLE
-        }else{
-            binding.llLeft.visibility = View.GONE
-            binding.llRight.visibility = View.GONE
-            binding.llClose.visibility = View.GONE
-            binding.llLegend.visibility = View.GONE
-        }
     }
 }
