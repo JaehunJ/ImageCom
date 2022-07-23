@@ -1,5 +1,6 @@
 package com.oldee.imageviewer
 
+import android.animation.LayoutTransition
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ScaleGestureDetector
@@ -49,18 +50,9 @@ class ImageViewerDialog(
         adapter = ImageViewerAdapter(bitmapList, imageCallback)
         binding.vpImage.adapter = adapter
 
-//        binding.vpImage.setOnClickListener {
-//            visibilityComponent(binding.llLegend.visibility == View.GONE)
-//        }
-
-//        mScaleGestureDetector =
-
-//        binding.vpImage.getChildAt(0)?.setOnTouchListener { v, event ->
-//
-//            return@setOnTouchListener true
-//        }
-
-
+        //animate
+        binding.llRight.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING)
+        binding.llLeft.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING)
 
 
         return binding.root
@@ -80,6 +72,21 @@ class ImageViewerDialog(
         binding.tvMax.text = bitmapList.size.toString()
         binding.tvCurrent.text = "1"
 
+        binding.llLeft.setOnClickListener {
+            val currentItem = binding.vpImage.currentItem
+            if(currentItem != 0){
+                binding.vpImage.currentItem = currentItem-1
+            }
+        }
+
+        binding.llRight.setOnClickListener {
+            val max = adapter.itemCount
+            val currentItem = binding.vpImage.currentItem
+            if(currentItem != max-1){
+                binding.vpImage.currentItem = currentItem+1
+            }
+        }
+
         binding.vpImage.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -87,12 +94,12 @@ class ImageViewerDialog(
                 binding.tvCurrent.text = (position + 1).toString()
 
                 if (position == 0 && mode == MULTIPLE) {
-                    binding.ivPrev.visibility = View.GONE
+                    binding.llLeft.visibility = View.GONE
                 } else if (position == bitmapList.size - 1 && mode == MULTIPLE) {
-                    binding.ivNext.visibility = View.GONE
+                    binding.llRight.visibility = View.GONE
                 } else if (mode == MULTIPLE) {
-                    binding.ivPrev.visibility = View.VISIBLE
-                    binding.ivNext.visibility = View.VISIBLE
+                    binding.llLeft.visibility = View.VISIBLE
+                    binding.llRight.visibility = View.VISIBLE
                 }
             }
         })
