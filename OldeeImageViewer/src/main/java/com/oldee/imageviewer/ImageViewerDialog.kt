@@ -50,10 +50,7 @@ class ImageViewerDialog(
         adapter = ImageViewerAdapter(bitmapList, imageCallback)
         binding.vpImage.adapter = adapter
 
-        //animate
-        binding.llRight.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING)
-        binding.llLeft.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING)
-
+        //animat
 
         return binding.root
     }
@@ -61,48 +58,16 @@ class ImageViewerDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (mode == SINGLE) {
-            binding.llLeft.visibility = View.GONE
-            binding.llRight.visibility = View.GONE
-        } else {
-            binding.llLeft.visibility = View.VISIBLE
-            binding.llRight.visibility = View.VISIBLE
-        }
 
         binding.tvMax.text = bitmapList.size.toString()
         binding.tvCurrent.text = "1"
 
-        binding.llLeft.setOnClickListener {
-            val currentItem = binding.vpImage.currentItem
-            if(currentItem != 0){
-                binding.vpImage.currentItem = currentItem-1
-            }
-        }
 
-        binding.llRight.setOnClickListener {
-            val max = adapter.itemCount
-            val currentItem = binding.vpImage.currentItem
-            if(currentItem != max-1){
-                binding.vpImage.currentItem = currentItem+1
-            }
-        }
 
         binding.vpImage.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-
                 binding.tvCurrent.text = (position + 1).toString()
-
-                if (position == 0 && mode == MULTIPLE) {
-                    binding.llLeft.visibility = View.GONE
-                    binding.llRight.visibility = View.VISIBLE
-                } else if (position == bitmapList.size - 1 && mode == MULTIPLE) {
-                    binding.llLeft.visibility = View.VISIBLE
-                    binding.llRight.visibility = View.GONE
-                } else if (mode == MULTIPLE) {
-                    binding.llLeft.visibility = View.VISIBLE
-                    binding.llRight.visibility = View.VISIBLE
-                }
             }
         })
 
